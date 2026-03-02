@@ -1,0 +1,11 @@
+target/
+**/*.rs.bk
+Cargo.lock
+.idea/
+.vscode/
+mpv.exe
+mpv.com
+d3dcompiler_43.dll
+libmpv-2.dll
+*.7z
+*.log
