@@ -22,13 +22,13 @@
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Windows Specifics (libmpv)
 
-Ensure you have the following installed on your system:
-
-- **Rust toolchain** (latest stable)
-- **libmpv** development headers (e.g., `libmpv-dev` on Debian/Ubuntu or `mpv` on Arch Linux)
-- **NVIDIA Drivers** with NVML support
+1. Run `.\scripts\update_mpv.bat` to download the developer package from GitHub.
+2. Extract the contents to the project root.
+3. Keep the name **`libmpv-2.dll`** as is.
+4. Rename the import library **`libmpv.dll.a`** to **`libmpv-2.lib`** in the root folder.
+5. Compile using `cargo build --release`.
 
 ### Installation
 
