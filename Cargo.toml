@@ -1,6 +1,6 @@
 [package]
 name = "axon-media-engine"
-version = "7.0.0"
+version = "7.2.0"
 edition = "2021"
 
 [dependencies]
@@ -11,7 +11,7 @@ sysinfo = "0.30"
 nvml-wrapper = "0.10"
 eframe = { version = "0.24", features = ["glow"] }
 rfd = "0.12"
-interprocess = "1.2" # Abstração Cross-Platform para IPC (Sockets/Pipes)
+libmpv2 = "5.0.3"
 
 [target.'cfg(windows)'.dependencies]
 winapi = { version = "0.3", features = ["winuser", "libloaderapi"] } # Para esconder console no Windows
