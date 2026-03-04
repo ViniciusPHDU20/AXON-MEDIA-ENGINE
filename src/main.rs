@@ -28,21 +28,19 @@ struct AxonCentral {
 
 impl AxonCentral {
     fn new(_cc: &eframe::CreationContext<'_>, stats: Arc<Mutex<HardwareStats>>) -> Self {
-        // Estilização Profissional
         let mut visual = egui::Visuals::dark();
         visual.widgets.noninteractive.bg_fill = egui::Color32::from_rgb(15, 15, 20);
         visual.widgets.active.fg_stroke = egui::Stroke::new(2.0, egui::Color32::from_rgb(0, 150, 255));
         _cc.egui_ctx.set_visuals(visual);
 
         let mpv = Mpv::new().unwrap_or_else(|e| {
-            eprintln!("CRITICAL ERROR: Failed to initialize libmpv. Is it installed? Error: {}", e);
+            eprintln!("CRITICAL ERROR: Failed to initialize libmpv. Error: {}", e);
             std::process::exit(1);
         });
         
-        // Otimização para Wayland + NVIDIA
         let _ = mpv.set_property("vo", "gpu-next");
-        let _ = mpv.set_property("gpu-context", "wayland");
-        let _ = mpv.set_property("hwdec", "nvdec");
+        let _ = mpv.set_property("gpu-context", "auto");
+        let _ = mpv.set_property("hwdec", "auto");
         let _ = mpv.set_property("terminal", "yes");
         
         Self {
@@ -105,7 +103,6 @@ impl eframe::App for AxonCentral {
 
                 ui.add_space(15.0);
 
-                // CONTROLE DE TEMPO (SLIDER)
                 if self.is_playing && self.metadata.duration > 0.0 {
                     ui.group(|ui| {
                         ui.label(egui::RichText::new(format!(
@@ -127,7 +124,6 @@ impl eframe::App for AxonCentral {
 
                 ui.add_space(20.0);
 
-                // TELEMETRIA
                 ui.group(|ui| {
                     ui.label(egui::RichText::new("SYSTEM TELEMETRY").strong().size(10.0));
                     ui.horizontal(|ui| {
@@ -149,7 +145,7 @@ impl eframe::App for AxonCentral {
 
                 ui.add_space(15.0);
                 if self.is_playing {
-                    ui.colored_label(egui::Color32::from_rgb(0, 150, 255), "Hardware Acceleration: ACTIVE (NVDEC)");
+                    ui.colored_label(egui::Color32::from_rgb(0, 150, 255), "Hardware Acceleration: ACTIVE (AUTO)");
                 }
             });
         });
@@ -167,11 +163,22 @@ fn main() -> anyhow::Result<()> {
         let mut sys = System::new_all();
         loop {
             sys.refresh_all();
-            let g_load = nvml.as_ref()
-                .and_then(|n| n.device_by_index(0).ok())
-                .and_then(|d| d.utilization_rates().ok())
-                .map(|u| u.gpu)
-                .unwrap_or(0);
+            
+            let g_load = if let Some(ref n) = nvml {
+                n.device_by_index(0).ok()
+                    .and_then(|d| d.utilization_rates().ok())
+                    .map(|u| u.gpu)
+                    .unwrap_or(0)
+            } else {
+                if cfg!(target_os = "linux") {
+                    std::fs::read_to_string("/sys/class/drm/card0/device/gpu_busy_percent")
+                        .ok()
+                        .and_then(|s| s.trim().parse::<u32>().ok())
+                        .unwrap_or(0)
+                } else {
+                    0
+                }
+            };
 
             if let Ok(mut s) = stats_clone.lock() {
                 s.gpu_load = g_load;
