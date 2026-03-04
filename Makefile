@@ -4,25 +4,29 @@
 PROJECT_NAME = axon-media-engine
 BINARY = target/release/$(PROJECT_NAME)
 
-.PHONY: all setup build run clean update-mpv help
+.PHONY: all setup build run clean windows help
 
 all: setup build
 
 help:
 	@echo "AXON MEDIA ENGINE - Command Hub"
 	@echo "  setup      Install system dependencies (pacman)"
-	@echo "  build      Compile the project in release mode"
+	@echo "  build      Compile the project in release mode (Linux)"
+	@echo "  windows    Cross-compile for Windows (.exe)"
 	@echo "  run        Compile and execute the engine"
 	@echo "  clean      Remove build artifacts"
-	@echo "  check      Validate Rust code without building"
 
 setup:
 	@echo "[*] Installing dependencies for $(PROJECT_NAME)..."
-	sudo pacman -S --needed --noconfirm mpv rustup gcc pkg-config nvidia-utils
+	sudo pacman -S --needed --noconfirm mpv rustup gcc pkg-config nvidia-utils mingw-w64-gcc
 
 build:
 	@echo "[*] Building release binary..."
 	cargo build --release
+
+windows:
+	@chmod +x build_windows.sh
+	./build_windows.sh
 
 run: build
 	@echo "[*] Launching AXON MEDIA ENGINE..."
