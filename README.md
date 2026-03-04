@@ -60,4 +60,4 @@ The v7.2 release marks a significant architectural shift:
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
-*Developed by ViniciusPHDU20 - God Mode Active*
+*Developed by ViniciusPHDU20*
