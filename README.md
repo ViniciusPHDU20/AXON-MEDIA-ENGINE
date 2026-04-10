@@ -2,6 +2,10 @@
 
 **AXON MEDIA ENGINE** is a high-performance, professional-grade media playback solution built with **Rust**. It combines the raw power of `libmpv` with a modern, reactive interface powered by `egui`, specifically optimized for Linux environments utilizing NVIDIA hardware and Wayland.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
+[![Rust](https://img.shields.io/badge/Rust-2021-orange.svg)](https://www.rust-lang.org/)
+
 ## 🛠 Core Features
 
 - **Next-Gen Playback Engine:** Leveraging `libmpv2` for robust, frame-perfect media decoding.
