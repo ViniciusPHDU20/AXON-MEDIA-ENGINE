@@ -34,6 +34,19 @@ struct AxonCentral {
     upscale_mode: UpscaleMode,
 }
 
+// FORMATADOR DE TEMPO SOBERANO
+fn format_time(seconds: f64) -> String {
+    let total_secs = seconds as u64;
+    let hours = total_secs / 3600;
+    let minutes = (total_secs % 3600) / 60;
+    let secs = total_secs % 60;
+    if hours > 0 {
+        format!("{:02}:{:02}:{:02}", hours, minutes, secs)
+    } else {
+        format!("{:02}:{:02}", minutes, secs)
+    }
+}
+
 impl AxonCentral {
     fn new(_cc: &eframe::CreationContext<'_>, stats: Arc<Mutex<HardwareStats>>) -> Self {
         let mut style = (*_cc.egui_ctx.style()).clone();
@@ -161,7 +174,7 @@ impl eframe::App for AxonCentral {
                 ui.horizontal(|ui| {
                     ui.add_space(15.0);
                     ui.heading(egui::RichText::new("AXON MEDIA ENGINE").color(egui::Color32::from_rgb(0, 180, 255)).strong());
-                    ui.label(egui::RichText::new("v12.5.0-GOD").color(egui::Color32::from_rgb(255, 0, 255)).strong());
+                    ui.label(egui::RichText::new("v12.6.0-GOD").color(egui::Color32::from_rgb(255, 0, 255)).strong());
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if ui.button(if self.show_playlist { "❌" } else { "📁" }).clicked() { self.show_playlist = !self.show_playlist; }
                     });
@@ -205,12 +218,12 @@ impl eframe::App for AxonCentral {
                 if self.is_playing && self.metadata.duration > 0.0 {
                     ui.group(|ui| {
                         ui.horizontal(|ui| {
-                            ui.label(format!("{:.0}s", self.metadata.position));
+                            ui.label(egui::RichText::new(format_time(self.metadata.position)).strong().color(egui::Color32::WHITE));
                             let mut pos = self.metadata.position;
                             if ui.add(egui::Slider::new(&mut pos, 0.0..=self.metadata.duration).show_value(false).trailing_fill(true)).changed() {
                                 if let Some(ref m) = self.mpv { let _ = m.set_property("time-pos", pos); }
                             }
-                            ui.label(format!("{:.0}s", self.metadata.duration));
+                            ui.label(egui::RichText::new(format_time(self.metadata.duration)).color(egui::Color32::GRAY));
                         });
                     });
                 }
